@@ -6,15 +6,15 @@ Sistem Penilaian Kuliah
 	- username
 	- password
 
-#Privilage :
+2. Privilage :
 	- admin
 	- operator
 
-#admin:
+3. admin:
 	1. user
 	2. mata kuliah
 	3. mahasiswa
-#menu Admin
+4. menu Admin
 	1. Menu User | CRUD
 	- insert [nama,username,password,privilage]
 	- update, delete, view
@@ -27,11 +27,11 @@ Sistem Penilaian Kuliah
 	- npm
 	- jurusan
 	4. logout
-#operator
+5. operator
 	1. isi nilai
 	2. cetak
 	3. logout
-#menu Operator
+6. menu Operator
 	1. Isi nilai | CRUD
 	- npm
 	- mata kuliah
