@@ -10,7 +10,12 @@ struct User{
     User *next;
 };
 
-
+struct Mahasiswa{
+string namaMhs, jurusan;
+int npm;
+Mahasiswa *prev;
+Mahasiswa *next;
+};
 
 struct MataKuliah{
     string namaMatkul;
@@ -29,8 +34,15 @@ struct Penilaian{
 };
 
 void inputDummyUserForLogin(User *head, User *tail, string namaUser, string username, string password, string privilage);
+// Modul Mahasiswa
+void inputMahasiswa(Mahasiswa *head, Mahasiswa *tail, string namaMhs, string jurusan, int npm);
 
 int main(){
+    User head, tail;
+    head.next=NULL;
+    head.prev=NULL;
+    tail.prev=NULL;
+    tail.next=NULL;
 
 }
 
@@ -48,5 +60,18 @@ void inputDummyUserForLogin(User *head, User *tail, string namaUser, string user
         tail->prev->next = temp;
     }
     temp->next = tail;
-    tail->prev = temp;
+    tail->prev = temp;https://github.com/syarifuddinahmads/sistem-penilaian-mahasiswa.git
+};
+
+void inputMahasiswa(Mahasiswa *head, Mahasiswa *tail, string namaMhs, string jurusan, int npm){
+Mahasiswa *baru=new Mahasiswa;
+if(tail->prev=NULL){
+    tail->prev=baru;
+    head->next=baru;
+}
+else{
+    baru->prev=tail->prev;
+    tail->prev->next=baru;
+    tail->prev=baru;
+}
 };
