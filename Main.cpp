@@ -82,10 +82,8 @@ int main()
     headMatkul.prev = NULL;
     tailMatkul.next = NULL;
     tailMatkul.prev = NULL;
-
     // Login initiator
     initLogin(&headUser,&tailUser,&headMhs,&tailMhs,&headMatkul,&tailMatkul);
-
 }
 
 // Login Modul
@@ -144,6 +142,7 @@ void adminModule(User *headUser, User *tailUser, Mahasiswa *headMhs, Mahasiswa *
             userModule(headUser,tailUser);
             break;
         case 2:
+            matkulModule(headMatkul, tailMatkul);
             break;
         case 3:
             break;
@@ -423,8 +422,123 @@ void detailUser(User *headUser, User *tailUser, string username,string option)
 // End User Modul
 
 // Matakuliah Modul
+void matkulModule(MataKuliah *headMatkul, MataKuliah *tailMatkul){
+    int menu,jumlahMatkul, sks, semester;
+    string namaMatkul;
+    do
+    {
+        menuMatkul();
+        cout<<"Pilih Menu :";
+        cin>>menu;
+        switch(menu)
+        {
+        case 1:
+            cout<<"Masukkan Jumlah Mata Kuliah : ";
+            cin>>jumlahMatkul;
+            for(int i = 0; i<jumlahMatkul; i++)
+            {
+                cout<<"Mata Kuliah ke - "<<i+1<<endl;
+                cout<<"Nama :";
+                cin>>namaMatkul;
+                cout<<"SKS :";
+                cin>>sks;
+                cout<<"Semester :";
+                cin>>semester;
+                inputMatkul(headMatkul, tailMatkul, namaMatkul, sks, semester);
+            }
+            break;
+        case 2:
+            showMatkul(headMatkul, tailMatkul);
+            break;
+        case 3:
+            cout<<"Masukkan Nama Mata Kuliah yang akan di Edit : ";
+            cin>>namaMatkul;
+            editMatkul(headMatkul, tailMatkul, namaMatkul);
+            break;
+        case 4:
+            cout<<"Masukkan Nama Mata Kuliah yang akan di Delete : ";
+            cin>>namaMatkul;
+            deleteMatkul(headMatkul, tailMatkul, namaMatkul);
+            break;
+        case 5:
+            adminModule(NULL,NULL,NULL,NULL,headMatkul,tailMatkul);
+            break;
+        case 6:
+            break;
+        default:
+            cout<<"Menu tidak valid !"<<endl;
+            break;
+        }
+    }
+    while(menu <= 6);
+}
 
+void menuMatkul(){
+    cout<<"Menu Mata Kuliah : "<<endl;
+    cout<<"1. Input Mata Kuliah"<<endl;
+    cout<<"2. Show Mata Kuliah"<<endl;
+    cout<<"3. Edit Mata Kuliah"<<endl;
+    cout<<"4. Delete Mata Kuliah"<<endl;
+    cout<<"5. Kembali Ke Menu Utama"<<endl;
+    cout<<"6. Logout"<<endl;
+}
 
+void inputMatkul(MataKuliah *headMatkul, MataKuliah *tailMatkul, string namaMatkul, int sks, int semester){
+    MataKuliah *temp = new MataKuliah;
+    temp->namaMatkul = namaMatkul;
+    temp->sks = sks;
+    temp->semester = semester;
+    if(headMatkul->next == NULL)
+    {
+        headMatkul->next = temp;
+        tailMatkul->prev = temp;
+    }
+    else
+    {
+        temp->prev = tailMatkul->prev;
+        tailMatkul->prev->next = temp;
+    }
+    temp->next = tailMatkul;
+    tailMatkul->prev = temp;
+}
+
+void showMatkul(MataKuliah *headMatkul, MataKuliah *tailMatkul){
+    MataKuliah *temp = headMatkul->next;
+    if(temp == NULL)
+    {
+        cout <<endl;
+        cout << "Mata Kuliah Tidak Tersedia !"<<endl;
+        cout <<endl;
+    }
+    else
+    {
+        cout <<endl;
+        cout << "Data Mata Kuliah : "<<endl;
+        cout <<endl;
+        while(temp != tailUser)
+        {
+            cout<< "Nama : " << temp->namaMatkul <<endl;
+            cout<< "SKS : " << temp->sks <<endl;
+            cout<< "Semester : " << temp->semester <<endl;
+            cout <<endl;
+            temp = temp->next;
+        }
+        cout <<endl;
+    }
+}
+
+void editMatkul(MataKuliah *headMatkul, MataKuliah *tailMatkul, string namaMatkul){
+
+}
+
+void deleteMatkul(MataKuliah *headMatkul, MataKuliah *tailMatkul, string namaMatkul){
+
+}
+
+void detailMatkul(MataKuliah *headMatkul, MataKuliah *tailMatkul, string namaMatkul,string option){
+
+}
+// End Matakuliah Modul
 void inputMahasiswa(Mahasiswa *headMhs, Mahasiswa *tailMhs, string namaMhs, string jurusan, int npm)
 {
     Mahasiswa *baru=new Mahasiswa;
