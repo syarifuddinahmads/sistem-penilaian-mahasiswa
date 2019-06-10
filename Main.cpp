@@ -422,7 +422,8 @@ void detailUser(User *headUser, User *tailUser, string username,string option)
 // End User Modul
 
 // Matakuliah Modul
-void matkulModule(MataKuliah *headMatkul, MataKuliah *tailMatkul){
+void matkulModule(MataKuliah *headMatkul, MataKuliah *tailMatkul)
+{
     int menu,jumlahMatkul, sks, semester;
     string namaMatkul;
     do
@@ -473,7 +474,8 @@ void matkulModule(MataKuliah *headMatkul, MataKuliah *tailMatkul){
     while(menu <= 6);
 }
 
-void menuMatkul(){
+void menuMatkul()
+{
     cout<<"Menu Mata Kuliah : "<<endl;
     cout<<"1. Input Mata Kuliah"<<endl;
     cout<<"2. Show Mata Kuliah"<<endl;
@@ -483,7 +485,8 @@ void menuMatkul(){
     cout<<"6. Logout"<<endl;
 }
 
-void inputMatkul(MataKuliah *headMatkul, MataKuliah *tailMatkul, string namaMatkul, int sks, int semester){
+void inputMatkul(MataKuliah *headMatkul, MataKuliah *tailMatkul, string namaMatkul, int sks, int semester)
+{
     MataKuliah *temp = new MataKuliah;
     temp->namaMatkul = namaMatkul;
     temp->sks = sks;
@@ -502,7 +505,8 @@ void inputMatkul(MataKuliah *headMatkul, MataKuliah *tailMatkul, string namaMatk
     tailMatkul->prev = temp;
 }
 
-void showMatkul(MataKuliah *headMatkul, MataKuliah *tailMatkul){
+void showMatkul(MataKuliah *headMatkul, MataKuliah *tailMatkul)
+{
     MataKuliah *temp = headMatkul->next;
     if(temp == NULL)
     {
@@ -515,7 +519,7 @@ void showMatkul(MataKuliah *headMatkul, MataKuliah *tailMatkul){
         cout <<endl;
         cout << "Data Mata Kuliah : "<<endl;
         cout <<endl;
-        while(temp != tailUser)
+        while(temp != tailMatkul)
         {
             cout<< "Nama : " << temp->namaMatkul <<endl;
             cout<< "SKS : " << temp->sks <<endl;
@@ -527,16 +531,149 @@ void showMatkul(MataKuliah *headMatkul, MataKuliah *tailMatkul){
     }
 }
 
-void editMatkul(MataKuliah *headMatkul, MataKuliah *tailMatkul, string namaMatkul){
-
+void editMatkul(MataKuliah *headMatkul, MataKuliah *tailMatkul, string namaMatkul)
+{
+    MataKuliah *curr = headMatkul->next;
+    if(curr == NULL)
+    {
+        cout <<endl;
+        cout << "Matakuliah tidak ditemukan !"<<endl;
+        cout <<endl;
+    }
+    else
+    {
+        cout <<endl;
+        while(curr != tailMatkul)
+        {
+            if(curr->namaMatkul == namaMatkul)
+            {
+                detailMatkul(curr,tailMatkul,namaMatkul,"edit");
+            }
+            curr = curr->next;
+        }
+        cout <<endl;
+    }
 }
 
-void deleteMatkul(MataKuliah *headMatkul, MataKuliah *tailMatkul, string namaMatkul){
-
+void deleteMatkul(MataKuliah *headMatkul, MataKuliah *tailMatkul, string namaMatkul)
+{
+    MataKuliah *curr = headMatkul->next;
+    if(curr == NULL)
+    {
+        cout <<endl;
+        cout << "Matakuliah tidak ditemukan !"<<endl;
+        cout <<endl;
+    }
+    else
+    {
+        cout <<endl;
+        while(curr != tailMatkul)
+        {
+            if(curr->namaMatkul == namaMatkul)
+            {
+                detailMatkul(curr,tailMatkul,namaMatkul,"delete");
+            }
+            curr = curr->next;
+        }
+        cout <<endl;
+    }
 }
 
-void detailMatkul(MataKuliah *headMatkul, MataKuliah *tailMatkul, string namaMatkul,string option){
+void detailMatkul(MataKuliah *headMatkul, MataKuliah *tailMatkul, string namaMatkul,string option)
+{
+    char kode;
+    string nama_matkul;
+    int sks, semester;
+    MataKuliah *temp = headMatkul;
+    cout<<"Detail User : "<<endl;
+    cout<<"Nama Matkul :"<<temp->namaMatkul<<endl;
+    cout<<"SKS :"<<temp->sks<<endl;
+    cout<<"Semester :"<<temp->semester<<endl;
+    cout<<endl;
+    if(option == "edit")
+    {
+        cout<<"Edit Mata Kuliah : "<<endl;
+        cout<<"Nama Matkul: ";
+        cin>>nama_matkul;
+        cout<<"SKS : ";
+        cin>>sks;
+        cout<<"Semester : ";
+        cin>>semester;
+        do
+        {
+            cout<<"Simpan & Update Matkul (y/t) ?";
+            cin>>kode;
+            if(kode == 'y')
+            {
+                temp->namaMatkul = nama_matkul;
+                temp->sks = sks;
+                temp->semester = semester;
+                cout<<"Update Data Matkul berhasil !"<<endl;
+            }
+            else if(kode == 't')
+            {
+                cout<<"Update Data Matkul dibatalkan !"<<endl;
+                break;
+            }
+            else
+            {
+                cout<<"Masukkan y/t untuk konfirmasi !"<<endl;
+            }
+        }
+        while(kode != 'y');
+    }
 
+    if(option == "delete")
+    {
+        do
+        {
+            cout<<"Hapus Data Mata Kuliah (y/t) ?";
+            cin>>kode;
+            if(kode == 'y')
+            {
+                while(temp != tailMatkul)
+                {
+                    if(temp->namaMatkul == namaMatkul)
+                    {
+                        // Front
+                        if(temp->prev == NULL)
+                        {
+                            cout<<"top"<<endl;
+                            temp->next = NULL;
+                            delete temp;
+
+                        }
+                        // Mid
+                        if(temp->prev != NULL && temp->next != NULL)
+                        {
+                            temp->prev->next = temp->next;
+                            temp->next->prev = temp->prev;
+
+                            delete temp;
+                        }
+                        // Last
+                        if(temp->next == NULL)
+                        {
+                            temp->prev->next = tailMatkul->next;
+                            tailMatkul->prev = temp;
+                        }
+                    }
+                    temp = temp->next;
+                }
+                cout<<"Delete Data Matakuliah berhasil !"<<endl;
+            }
+            else if(kode == 't')
+            {
+                cout<<"Delete Data Matakuliah dibatalkan !"<<endl;
+                break;
+            }
+            else
+            {
+                cout<<"Masukkan y/t untuk konfirmasi !"<<endl;
+            }
+        }
+        while(kode != 'y');
+    }
 }
 // End Matakuliah Modul
 void inputMahasiswa(Mahasiswa *headMhs, Mahasiswa *tailMhs, string namaMhs, string jurusan, int npm)
