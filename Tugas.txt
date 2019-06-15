@@ -1,0 +1,48 @@
+Sistem Penilaian Kuliah
+
+1.Login
+
+username
+password
+
+2.Privilage :
+
+admin
+operator
+
+3.admin:
+
+user
+mata kuliah
+mahasiswa
+
+4.menu Admin
+
+Menu User | CRUD
+insert [nama,username,password,privilage]
+update, delete, view
+
+- Mata Kuliah | CRUD
+nama Matakuliah
+sks
+Semester
+
+- mahasiswa | CRUD
+nama Mahasiswa
+npm
+jurusan
+logout
+
+5.operator
+
+isi nilai
+cetak
+logout
+menu Operator
+
+Isi nilai | CRUD
+npm
+mata kuliah
+nilai
+cetak
+rata-rata nilai mahasiswa

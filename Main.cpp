@@ -145,6 +145,7 @@ void adminModule(User *headUser, User *tailUser, Mahasiswa *headMhs, Mahasiswa *
             matkulModule(headMatkul, tailMatkul);
             break;
         case 3:
+            mhsModul(headMhs, tailMhs);
             break;
         case 4:
         default:
@@ -489,7 +490,7 @@ void inputMatkul(MataKuliah *headMatkul, MataKuliah *tailMatkul, string namaMatk
 {
     MataKuliah *temp = new MataKuliah;
     temp->namaMatkul = namaMatkul;
-    temp->sks = sks;
+    temp->sks = sk, int npms;
     temp->semester = semester;
     if(headMatkul->next == NULL)
     {
@@ -676,7 +677,63 @@ void detailMatkul(MataKuliah *headMatkul, MataKuliah *tailMatkul, string namaMat
     }
 }
 // End Matakuliah Modul
-void inputMahasiswa(Mahasiswa *headMhs, Mahasiswa *tailMhs, string namaMhs, string jurusan, int npm)
+// Mahasiswa Modul
+void mhsModul(Mahasiswa *headMhs, Mahasiswa *tailMhs)
+{
+    string namaMhs, jurusan;
+    int npm, menumhs, npmUpdate, npmDlt, b=0;
+    do
+    {
+        menuMhs();
+        cout<<"Pilih Menu : ";
+        cin>>menumhs;
+        switch(menumhs)
+        {
+        case 1:
+            for(int a=0; a<=b; a++)
+            {
+                cout<<"Nama Mahasiswa : ";
+                cin>>namaMhs;
+                cout<<"NPM : ";
+                cin>>npm;
+                cout<<"Jurusan : ";
+                cin>>jurusan;
+                inputMahasiswa(headMhs, tailMhs, namaMhs, npm, jurusan);
+            }
+            cout<<"Data Telah Tersimpan"<<endl;
+            break;
+        case 2:
+            viewMhs(headMhs, tailMhs);
+            break;
+        case 3:
+            viewMhs(headMhs, tailMhs);
+            cout<<"Masukan NPM untuk data yang akan di Update : ";
+            cin>>npmUpdate;
+            updateMhs(headMhs, tailMhs, npmUpdate);
+            break;
+        case 4:
+            viewMhs(headMhs, tailMhs);
+            cout<<"Masukan NPM untuk data yang akan dihapus : ";
+            cin>>npmDlt;
+            deleteMhs(headMhs, tailMhs, npmDlt);
+        case 5 :
+            break;
+        default:
+            cout<<"Menu tidak valid !"<<endl;
+            break;
+        }
+    }
+    while(true);
+}
+void menuMhs()
+{
+    cout<<"1. Input Data Mahasiswa"<<endl;
+    cout<<"2. View Data Mahasiswa"<<endl;
+    cout<<"3. Update Data Mahasiswa"<<endl;
+    cout<<"4. Delete Data Mahasiswa"<<endl;
+    cout<<"5. Logout"<<endl;
+}
+void inputMahasiswa(Mahasiswa *headMhs, Mahasiswa *tailMhs, string namaMhs, int npm, string jurusan)
 {
     Mahasiswa *baru=new Mahasiswa;
     if(tailMhs->prev=NULL)
@@ -690,4 +747,98 @@ void inputMahasiswa(Mahasiswa *headMhs, Mahasiswa *tailMhs, string namaMhs, stri
         tailMhs->prev->next=baru;
         tailMhs->prev=baru;
     }
-};
+    baru->namaMhs=namaMhs;
+    baru->npm=npm;
+    baru->jurusan=jurusan;
+}
+void viewMhs(Mahasiswa *headMhs, Mahasiswa *tailMhs)
+{
+    Mahasiswa *cetak=new Mahasiswa;
+    cetak=headMhs->next;
+    if(headMhs->next==NULL)
+    {
+        cout<<"Data Mahasiswa Belum belum dibuat"<<endl;
+    }
+    else
+    {
+        cout<<"Data Mahasiswa :"<<endl;
+        while(cetak!=NULL)
+        {
+            cout<<"Nama Mahasiswa : "<<cetak->namaMhs<<endl;
+            cout<<"Nama NPM : "<<cetak->npm<<endl;
+            cout<<"Nama Jurusan : "<<cetak->jurusan<<endl;
+            cetak=cetak->next;
+            cout<<endl;
+        }
+    }
+    cout<<endl;
+}
+void updateMhs (Mahasiswa *headMhs, Mahasiswa *tailMhs, int npm)
+{
+    char pil;
+    Mahasiswa *edit= new Mahasiswa;
+    edit=headMhs->next;
+    while(edit->npm!=npm)
+    {
+        if(edit==NULL)
+        {
+            break;
+        }
+        edit=edit->next;
+    }
+    if(edit->npm==npm)
+    {
+        cout<<"Data ditemukan, Yakin Ingin Mengubah Data Tersebut : y/t";
+        cin>>pil;
+        if(pil==y)
+        {
+            cout<<"Silakan Edit Data : "<<endl;
+            cout<<"Nama Mahasiswa : ";
+            cin>>edit->namaMhs;
+            cout<<"Nama NPM : ";
+            cin>>edit->npm;
+            cout<<"Nama Jurusan : ";
+            cin>>edit->jurusan;
+        }
+        else
+        {
+            cout<<"Data tidak jadi diubah"<<endl;
+        }
+    }
+    cout<<endl;
+}
+void deleteMhs (Mahasiswa *headMhs, Mahasiswa *tailMhs, int npm)
+{
+    char pil;
+    Mahasiswa *hapus=new Mahasiswa;
+    hapus=headMhs->next;
+    while(hapus->npm!=npm)
+    {
+        hapus=hapus->next;
+    }
+    if(hapus->npm==npm)
+    {
+        cout<<hapus->namaMhs<<endl;
+        cout<<hapus->npm<<endl;
+        cout<<hapus->jurusan<<endl;
+        cout<<"Yakin Ingin Menghapus Data Tersebut : y/t";
+        cin>>pil;
+        if(pil==y)
+        {
+            if(hapus->prev!=NULL)
+            {
+                hapus->prev->next=hapus->next;
+            }
+            else if(hapus->next!=NULL)
+            {
+                hapus->next->prev=hapus->prev;
+            }
+            cout<<"Data Berhasil Dihapus"<<endl;
+        }
+        else
+        {
+            cout<<"Data tidak jadi dihapus"<<endl;
+        }
+    }
+    cout<<endl;
+}
