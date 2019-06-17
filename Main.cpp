@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdlib.h>
 using namespace std;
 
 struct User
@@ -36,8 +37,9 @@ struct Penilaian
     Penilaian *prev;
     Penilaian *next;
 };
-// Modul Login
+// App Init
 void initLogin(User *headUser, User *tailUser, Mahasiswa *headMhs, Mahasiswa *tailMhs, MataKuliah *headMatkul, MataKuliah *tailMatkul);
+void initApp(User *headUser, User *tailUser, Mahasiswa *headMhs, Mahasiswa *tailMhs, MataKuliah *headMatkul, MataKuliah *tailMatkul);
 // Modul Admin
 void adminModule(User *headUser, User *tailUser, Mahasiswa *headMhs, Mahasiswa *tailMhs, MataKuliah *headMatkul, MataKuliah *tailMatkul);
 void menuAdmin();
@@ -52,7 +54,7 @@ void editUser(User *headUser, User *tailUser, string username);
 void deleteUser(User *headUser, User *tailUser, string username);
 void detailUser(User *headUser, User *tailUser, string username,string option);
 // Modul Matakuliah
-void matkulModule(MataKuliah *headMatkul, MataKuliah *tailMatkul);
+void matkulModule(MataKuliah *headMatkul, MataKuliah *tailMatkul,User *headUser, User *tailUser);
 void menuMatkul();
 void inputMatkul(MataKuliah *headMatkul, MataKuliah *tailMatkul, string namaMatkul, int sks, int semester);
 void showMatkul(MataKuliah *headMatkul, MataKuliah *tailMatkul);
@@ -60,7 +62,13 @@ void editMatkul(MataKuliah *headMatkul, MataKuliah *tailMatkul, string namaMatku
 void deleteMatkul(MataKuliah *headMatkul, MataKuliah *tailMatkul, string namaMatkul);
 void detailMatkul(MataKuliah *headMatkul, MataKuliah *tailMatkul, string namaMatkul,string option);
 // Modul Mahasiswa
-void inputMahasiswa(Mahasiswa *headMhs, Mahasiswa *tailMhs, string namaMhs, string jurusan, int npm);
+void mhsModule(Mahasiswa *headMhs, Mahasiswa *tailMhs,User *headUser, User *tailUser);
+void menuMhs();
+void inputMhs(Mahasiswa *headMhs, Mahasiswa *tailMhs, int npmMhs, string namaMhs, string jurusan);
+void showMhs(Mahasiswa *headMhs, Mahasiswa *tailMhs);
+void editMhs(Mahasiswa *headMhs, Mahasiswa *tailMhs, int npmMhs);
+void deleteMhs(Mahasiswa *headMhs, Mahasiswa *tailMhs, int npmMhs);
+void detailMhs(Mahasiswa *headMhs, Mahasiswa *tailMhs, int npmMhs,string option);
 
 int main()
 {
@@ -82,39 +90,57 @@ int main()
     headMatkul.prev = NULL;
     tailMatkul.next = NULL;
     tailMatkul.prev = NULL;
-    // Login initiator
-    initLogin(&headUser,&tailUser,&headMhs,&tailMhs,&headMatkul,&tailMatkul);
+    // App initiator
+    initApp(&headUser,&tailUser,&headMhs,&tailMhs,&headMatkul,&tailMatkul);
+}
+
+// App Init
+
+void initApp(User *headUser, User *tailUser, Mahasiswa *headMhs, Mahasiswa *tailMhs, MataKuliah *headMatkul, MataKuliah *tailMatkul){
+    inputUser(headUser,tailUser, "Admin", "admin", "admin", "admin");
+    initLogin(headUser,tailUser,headMhs,tailMhs,headMatkul,tailMatkul);
 }
 
 // Login Modul
 void initLogin(User *headUser, User *tailUser, Mahasiswa *headMhs, Mahasiswa *tailMhs, MataKuliah *headMatkul, MataKuliah *tailMatkul)
 {
     string username, password;
-    inputUser(headUser,tailUser, "Admin", "admin", "admin", "admin");
-    cout<<"Login : "<<endl;
-    cout<<"Username : ";
-    cin>>username;
-    cout<<"Password : ";
-    cin>>password;
-    User *curr = headUser->next;
-    while(curr != tailUser)
+    do
     {
-        if(curr->username == username && curr->password == password)
+        cout<<"Login : "<<endl;
+        cout<<"Username : ";
+        cin>>username;
+        cout<<"Password : ";
+        cin>>password;
+        User *curr = headUser->next;
+        while(curr != tailUser)
         {
-            if(curr->privilage == "admin")
-            {
-                adminModule(headUser, tailUser, headMhs, tailMhs, headMatkul, tailMatkul);
-                break;
+            if(curr->username != username){
+                cout<<"Username yang anda masukkan tidak tersedia atau salah !"<<endl;
             }
 
-            if(curr->privilage == "operator")
-            {
-                operatorModule();
-                break;
+            if(curr->username == username && curr->password != password){
+                cout<<"Password yang anda masukkan salah !"<<endl;
             }
+
+            if(curr->username == username && curr->password == password)
+            {
+                if(curr->privilage == "admin")
+                {
+                    adminModule(headUser, tailUser, headMhs, tailMhs, headMatkul, tailMatkul);
+                    break;
+                }
+
+                if(curr->privilage == "operator")
+                {
+                    operatorModule();
+                    break;
+                }
+            }
+            curr = curr->next;
         }
-        curr = curr->next;
     }
+    while(true);
 }
 
 // Module Admin
@@ -142,12 +168,13 @@ void adminModule(User *headUser, User *tailUser, Mahasiswa *headMhs, Mahasiswa *
             userModule(headUser,tailUser);
             break;
         case 2:
-            matkulModule(headMatkul, tailMatkul);
+            matkulModule(headMatkul, tailMatkul,headUser,tailUser);
             break;
         case 3:
-            mhsModul(headMhs, tailMhs);
+            mhsModule(headMhs, tailMhs,headUser,tailUser);
             break;
         case 4:
+            initLogin(headUser,tailUser,headMhs,tailMhs,headMatkul,tailMatkul);
         default:
             cout<<"Menu tidak valid !"<<endl;
             break;
@@ -207,6 +234,7 @@ void userModule(User *headUser, User *tailUser)
             adminModule(headUser, tailUser,NULL,NULL,NULL,NULL);
             break;
         case 6:
+            initLogin(headUser,tailUser,NULL,NULL,NULL,NULL);
             break;
         default:
             cout<<"Menu tidak valid !"<<endl;
@@ -423,7 +451,7 @@ void detailUser(User *headUser, User *tailUser, string username,string option)
 // End User Modul
 
 // Matakuliah Modul
-void matkulModule(MataKuliah *headMatkul, MataKuliah *tailMatkul)
+void matkulModule(MataKuliah *headMatkul, MataKuliah *tailMatkul,User *headUser, User *tailUser)
 {
     int menu,jumlahMatkul, sks, semester;
     string namaMatkul;
@@ -466,6 +494,7 @@ void matkulModule(MataKuliah *headMatkul, MataKuliah *tailMatkul)
             adminModule(NULL,NULL,NULL,NULL,headMatkul,tailMatkul);
             break;
         case 6:
+            initLogin(headUser,tailUser,NULL,NULL,NULL,NULL);
             break;
         default:
             cout<<"Menu tidak valid !"<<endl;
@@ -490,7 +519,7 @@ void inputMatkul(MataKuliah *headMatkul, MataKuliah *tailMatkul, string namaMatk
 {
     MataKuliah *temp = new MataKuliah;
     temp->namaMatkul = namaMatkul;
-    temp->sks = sk, int npms;
+    temp->sks = sks;
     temp->semester = semester;
     if(headMatkul->next == NULL)
     {
@@ -586,7 +615,7 @@ void detailMatkul(MataKuliah *headMatkul, MataKuliah *tailMatkul, string namaMat
     string nama_matkul;
     int sks, semester;
     MataKuliah *temp = headMatkul;
-    cout<<"Detail User : "<<endl;
+    cout<<"Detail Mata Kuliah : "<<endl;
     cout<<"Nama Matkul :"<<temp->namaMatkul<<endl;
     cout<<"SKS :"<<temp->sks<<endl;
     cout<<"Semester :"<<temp->semester<<endl;
@@ -678,167 +707,255 @@ void detailMatkul(MataKuliah *headMatkul, MataKuliah *tailMatkul, string namaMat
 }
 // End Matakuliah Modul
 // Mahasiswa Modul
-void mhsModul(Mahasiswa *headMhs, Mahasiswa *tailMhs)
+void mhsModule(Mahasiswa *headMhs, Mahasiswa *tailMhs,User *headUser, User *tailUser)
 {
+    int menu,jumlahMhs, npm;
     string namaMhs, jurusan;
-    int npm, menumhs, npmUpdate, npmDlt, b=0;
     do
     {
         menuMhs();
-        cout<<"Pilih Menu : ";
-        cin>>menumhs;
-        switch(menumhs)
+        cout<<"Pilih Menu :";
+        cin>>menu;
+        switch(menu)
         {
         case 1:
-            for(int a=0; a<=b; a++)
+            cout<<"Masukkan Jumlah Mahasiswa : ";
+            cin>>jumlahMhs;
+            for(int i = 0; i<jumlahMhs; i++)
             {
-                cout<<"Nama Mahasiswa : ";
-                cin>>namaMhs;
-                cout<<"NPM : ";
+                cout<<"NPM :";
                 cin>>npm;
-                cout<<"Jurusan : ";
+                cout<<"Mahasiswa ke - "<<i+1<<endl;
+                cout<<"Nama :";
+                cin>>namaMhs;
+                cout<<"Jurusan :";
                 cin>>jurusan;
-                inputMahasiswa(headMhs, tailMhs, namaMhs, npm, jurusan);
+                inputMhs(headMhs, tailMhs, npm, namaMhs, jurusan);
             }
-            cout<<"Data Telah Tersimpan"<<endl;
             break;
         case 2:
-            viewMhs(headMhs, tailMhs);
+            showMhs(headMhs, tailMhs);
             break;
         case 3:
-            viewMhs(headMhs, tailMhs);
-            cout<<"Masukan NPM untuk data yang akan di Update : ";
-            cin>>npmUpdate;
-            updateMhs(headMhs, tailMhs, npmUpdate);
+            cout<<"Masukkan NPM Mahasiswa yang akan diedit : ";
+            cin>>npm;
+            editMhs(headMhs, tailMhs, npm);
             break;
         case 4:
-            viewMhs(headMhs, tailMhs);
-            cout<<"Masukan NPM untuk data yang akan dihapus : ";
-            cin>>npmDlt;
-            deleteMhs(headMhs, tailMhs, npmDlt);
-        case 5 :
+            cout<<"Masukkan NPM Mahasiswa yang akan didelete : ";
+            cin>>npm;
+            deleteMhs(headMhs, tailMhs, npm);
+            break;
+        case 5:
+            adminModule(NULL,NULL,headMhs,tailMhs,NULL,NULL);
+            break;
+        case 6:
+            initLogin(headUser,tailUser,NULL,NULL,NULL,NULL);
             break;
         default:
             cout<<"Menu tidak valid !"<<endl;
             break;
         }
     }
-    while(true);
+    while(menu <= 6);
 }
+
 void menuMhs()
 {
-    cout<<"1. Input Data Mahasiswa"<<endl;
-    cout<<"2. View Data Mahasiswa"<<endl;
-    cout<<"3. Update Data Mahasiswa"<<endl;
-    cout<<"4. Delete Data Mahasiswa"<<endl;
-    cout<<"5. Logout"<<endl;
+    cout<<"Menu Mahasiswa : "<<endl;
+    cout<<"1. Input Mahasiswa"<<endl;
+    cout<<"2. Show Mahasiswa"<<endl;
+    cout<<"3. Edit Mahasiswa"<<endl;
+    cout<<"4. Delete Mahasiswa"<<endl;
+    cout<<"5. Kembali Ke Menu Utama"<<endl;
+    cout<<"6. Logout"<<endl;
 }
-void inputMahasiswa(Mahasiswa *headMhs, Mahasiswa *tailMhs, string namaMhs, int npm, string jurusan)
+
+void inputMhs(Mahasiswa *headMhs, Mahasiswa *tailMhs, int npmMhs, string namaMhs, string jurusan)
 {
-    Mahasiswa *baru=new Mahasiswa;
-    if(tailMhs->prev=NULL)
+    Mahasiswa *temp = new Mahasiswa;
+    temp->npm = npmMhs;
+    temp->namaMhs = namaMhs;
+    temp->jurusan = jurusan;
+    if(headMhs->next == NULL)
     {
-        tailMhs->prev=baru;
-        headMhs->next=baru;
+        headMhs->next = temp;
+        tailMhs->prev = temp;
     }
     else
     {
-        baru->prev=tailMhs->prev;
-        tailMhs->prev->next=baru;
-        tailMhs->prev=baru;
+        temp->prev = tailMhs->prev;
+        tailMhs->prev->next = temp;
     }
-    baru->namaMhs=namaMhs;
-    baru->npm=npm;
-    baru->jurusan=jurusan;
+    temp->next = tailMhs;
+    tailMhs->prev = temp;
 }
-void viewMhs(Mahasiswa *headMhs, Mahasiswa *tailMhs)
+
+void showMhs(Mahasiswa *headMhs, Mahasiswa *tailMhs)
 {
-    Mahasiswa *cetak=new Mahasiswa;
-    cetak=headMhs->next;
-    if(headMhs->next==NULL)
+    Mahasiswa *temp = headMhs->next;
+    if(temp == NULL)
     {
-        cout<<"Data Mahasiswa Belum belum dibuat"<<endl;
+        cout <<endl;
+        cout << "Mahasiswa Tidak Tersedia !"<<endl;
+        cout <<endl;
     }
     else
     {
-        cout<<"Data Mahasiswa :"<<endl;
-        while(cetak!=NULL)
+        cout <<endl;
+        cout << "Data Mahasiswa : "<<endl;
+        cout <<endl;
+        while(temp != tailMhs)
         {
-            cout<<"Nama Mahasiswa : "<<cetak->namaMhs<<endl;
-            cout<<"Nama NPM : "<<cetak->npm<<endl;
-            cout<<"Nama Jurusan : "<<cetak->jurusan<<endl;
-            cetak=cetak->next;
-            cout<<endl;
+            cout<< "NPM : " << temp->npm <<endl;
+            cout<< "Nama : " << temp->namaMhs <<endl;
+            cout<< "Jurusan : " << temp->jurusan <<endl;
+            cout <<endl;
+            temp = temp->next;
         }
+        cout <<endl;
     }
-    cout<<endl;
 }
-void updateMhs (Mahasiswa *headMhs, Mahasiswa *tailMhs, int npm)
+
+void editMhs(Mahasiswa *headMhs, Mahasiswa *tailMhs, int npm)
 {
-    char pil;
-    Mahasiswa *edit= new Mahasiswa;
-    edit=headMhs->next;
-    while(edit->npm!=npm)
+    Mahasiswa *curr = headMhs->next;
+    if(curr == NULL)
     {
-        if(edit==NULL)
-        {
-            break;
-        }
-        edit=edit->next;
+        cout <<endl;
+        cout << "Mahasiswa tidak ditemukan !"<<endl;
+        cout <<endl;
     }
-    if(edit->npm==npm)
+    else
     {
-        cout<<"Data ditemukan, Yakin Ingin Mengubah Data Tersebut : y/t";
-        cin>>pil;
-        if(pil==y)
+        cout <<endl;
+        while(curr != tailMhs)
         {
-            cout<<"Silakan Edit Data : "<<endl;
-            cout<<"Nama Mahasiswa : ";
-            cin>>edit->namaMhs;
-            cout<<"Nama NPM : ";
-            cin>>edit->npm;
-            cout<<"Nama Jurusan : ";
-            cin>>edit->jurusan;
+            if(curr->npm == npm)
+            {
+                detailMhs(curr,tailMhs,npm,"edit");
+            }
+            curr = curr->next;
         }
-        else
-        {
-            cout<<"Data tidak jadi diubah"<<endl;
-        }
+        cout <<endl;
     }
-    cout<<endl;
 }
-void deleteMhs (Mahasiswa *headMhs, Mahasiswa *tailMhs, int npm)
+
+void deleteMhs(Mahasiswa *headMhs, Mahasiswa *tailMhs, int npm)
 {
-    char pil;
-    Mahasiswa *hapus=new Mahasiswa;
-    hapus=headMhs->next;
-    while(hapus->npm!=npm)
+    Mahasiswa *curr = headMhs->next;
+    if(curr == NULL)
     {
-        hapus=hapus->next;
+        cout <<endl;
+        cout << "Mahasiswa tidak ditemukan !"<<endl;
+        cout <<endl;
     }
-    if(hapus->npm==npm)
+    else
     {
-        cout<<hapus->namaMhs<<endl;
-        cout<<hapus->npm<<endl;
-        cout<<hapus->jurusan<<endl;
-        cout<<"Yakin Ingin Menghapus Data Tersebut : y/t";
-        cin>>pil;
-        if(pil==y)
+        cout <<endl;
+        while(curr != tailMhs)
         {
-            if(hapus->prev!=NULL)
+            if(curr->npm == npm)
             {
-                hapus->prev->next=hapus->next;
+                detailMhs(curr,tailMhs,npm,"delete");
             }
-            else if(hapus->next!=NULL)
-            {
-                hapus->next->prev=hapus->prev;
-            }
-            cout<<"Data Berhasil Dihapus"<<endl;
+            curr = curr->next;
         }
-        else
-        {
-            cout<<"Data tidak jadi dihapus"<<endl;
-        }
+        cout <<endl;
     }
-    cout<<endl;
 }
+
+void detailMhs(Mahasiswa *headMhs, Mahasiswa *tailMhs, int npm,string option)
+{
+    char kode;
+    string namaMhs, jurusan;
+    int npmMhs;
+    Mahasiswa *temp = headMhs;
+    cout<<"Detail Mahasiswa : "<<endl;
+    cout<<"NPM :"<<temp->npm<<endl;
+    cout<<"Nama Mahasiswa :"<<temp->namaMhs<<endl;
+    cout<<"Jurusan :"<<temp->jurusan<<endl;
+    cout<<endl;
+    if(option == "edit")
+    {
+        cout<<"Edit Mahasiswa : "<<endl;
+        cout<<"Nama: ";
+        cin>>namaMhs;
+        cout<<"Jurusan : ";
+        cin>>jurusan;
+        do
+        {
+            cout<<"Simpan & Update Mahasiswa (y/t) ?";
+            cin>>kode;
+            if(kode == 'y')
+            {
+                temp->namaMhs = namaMhs;
+                temp->jurusan = jurusan;
+                cout<<"Update Data Mahasiswa berhasil !"<<endl;
+            }
+            else if(kode == 't')
+            {
+                cout<<"Update Data Mahasiswa dibatalkan !"<<endl;
+                break;
+            }
+            else
+            {
+                cout<<"Masukkan y/t untuk konfirmasi !"<<endl;
+            }
+        }
+        while(kode != 'y');
+    }
+
+    if(option == "delete")
+    {
+        do
+        {
+            cout<<"Hapus Data Mahasiswa (y/t) ?";
+            cin>>kode;
+            if(kode == 'y')
+            {
+                while(temp != tailMhs)
+                {
+                    if(temp->npm == npm)
+                    {
+                        // Front
+                        if(temp->prev == NULL)
+                        {
+                            cout<<"top"<<endl;
+                            temp->next = NULL;
+                            delete temp;
+
+                        }
+                        // Mid
+                        if(temp->prev != NULL && temp->next != NULL)
+                        {
+                            temp->prev->next = temp->next;
+                            temp->next->prev = temp->prev;
+
+                            delete temp;
+                        }
+                        // Last
+                        if(temp->next == NULL)
+                        {
+                            temp->prev->next = tailMhs->next;
+                            tailMhs->prev = temp;
+                        }
+                    }
+                    temp = temp->next;
+                }
+                cout<<"Delete Data Mahasiswa berhasil !"<<endl;
+            }
+            else if(kode == 't')
+            {
+                cout<<"Delete Data Mahasiswa dibatalkan !"<<endl;
+                break;
+            }
+            else
+            {
+                cout<<"Masukkan y/t untuk konfirmasi !"<<endl;
+            }
+        }
+        while(kode != 'y');
+    }
+}
+// End Mahasiswa Modul
